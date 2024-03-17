@@ -1,10 +1,10 @@
 package com.tech.test.eq.bank.customer.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tech.test.eq.bank.customer.exception.CustomerNotFoundException;
 import com.tech.test.eq.bank.customer.model.Customer;
@@ -26,11 +26,13 @@ public class CustomerService {
 	public List<Customer> retrieveAllCustomers() {
 		return repository.findAll();
 	}
-
+	
+	@Transactional
 	public Customer createCustomer(Customer newCustomer) {
 		return repository.save(newCustomer);
 	}
 
+	@Transactional
 	public Customer updateCustomerName(Long id, Customer updatedCustomer) {
 		Customer existingCustomer = repository.findById(id)
 				.orElseThrow(() -> new CustomerNotFoundException("Customer not found with ID: " + id));

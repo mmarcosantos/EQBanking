@@ -16,7 +16,7 @@ import com.tech.test.eq.bank.account.model.Account;
 import com.tech.test.eq.bank.account.model.TransactionsReport;
 import com.tech.test.eq.bank.account.service.AccountService;
 import com.tech.test.eq.bank.account.transaction.TransactionRequest;
-import com.tech.test.eq.bank.transactions.controller.TransactionsService;
+import com.tech.test.eq.bank.transactions.service.TransactionsService;
 
 import jakarta.validation.Valid;
 
@@ -32,12 +32,14 @@ public class AccountController {
 		this.service = service;
 		this.transactionsService = transactionsService;
 	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<Account> getAccountById(@PathVariable Long id) {
 		Account account = service.retrieveAccount(id);
 		return ResponseEntity.ok(account);
 
 	}
+	
 	@GetMapping
 	public ResponseEntity<List<Account>> getAllAccounts() {
 		List<Account> accounts = service.getAllAccounts();
@@ -47,6 +49,7 @@ public class AccountController {
 			return ResponseEntity.ok(accounts);
 		}
 	}
+	
 	@PostMapping
 	public ResponseEntity<Account> createAccount(@RequestBody @Valid Account newAccount) {
 		Account createdAccount = service.createAccount(newAccount);
@@ -66,9 +69,9 @@ public class AccountController {
 		return ResponseEntity.noContent().build();
 
 	}
-	
+
 	@GetMapping("/{id}/transactions")
-	public ResponseEntity<List<TransactionsReport>> retrieveTransactionHistory(@PathVariable Long id){
+	public ResponseEntity<List<TransactionsReport>> retrieveTransactionHistory(@PathVariable Long id ){
 		List<TransactionsReport> report = transactionsService.retrieveTransactionsHistory(id);
 		if (report.isEmpty()) {
 			return ResponseEntity.noContent().build();

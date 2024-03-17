@@ -1,10 +1,9 @@
-package com.tech.test.eq.bank.transactions.controller;
+package com.tech.test.eq.bank.transactions.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.tech.test.eq.bank.account.enums.TransactionType;
@@ -36,7 +35,5 @@ public class TransactionsService {
         transaction.setTimestamp(LocalDateTime.now());
         repository.save(transaction);
 	}
-	
-	
 
 }

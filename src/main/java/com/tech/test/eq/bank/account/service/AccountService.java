@@ -14,28 +14,31 @@ import com.tech.test.eq.bank.account.model.Account;
 import com.tech.test.eq.bank.account.repository.AccountRepository;
 import com.tech.test.eq.bank.customer.model.Customer;
 import com.tech.test.eq.bank.customer.service.CustomerService;
-import com.tech.test.eq.bank.transactions.controller.TransactionsService;
+import com.tech.test.eq.bank.transactions.service.TransactionsService;
 
 @Service
 public class AccountService {
-	
-    private final AccountRepository repository;
+
+	private final AccountRepository repository;
 
 	private final CustomerService customerService;
-	
+
 	private final TransactionsService transactionsService;
 
-    public AccountService(AccountRepository accountRepository, CustomerService customerService, TransactionsService transactionsService) {
+	public AccountService(AccountRepository accountRepository, CustomerService customerService, TransactionsService transactionsService) {
 		this.repository = accountRepository;
 		this.customerService = customerService;
 		this.transactionsService = transactionsService;
 	}
-    @Transactional
+	
+	@Transactional
 	public Account createAccount(@RequestBody Account newAccount){
 		Customer retrieveCustomer = customerService.retrieveCustomer(newAccount.getCustomer().getId());
-        newAccount.setCustomer(retrieveCustomer);
-        return repository.save(newAccount);
-		
+		newAccount.setCustomer(retrieveCustomer);
+		Account createdAccount = repository.save(newAccount);
+		transactionsService.recordTransaction(createdAccount,createdAccount.getBalance(),TransactionType.CREATED);
+		return createdAccount;
+
 	}
 
 	public Account retrieveAccount(Long id) {
@@ -44,27 +47,26 @@ public class AccountService {
 	}
 
 	public List<Account> getAllAccounts() {
-		 return repository.findAll();
+		return repository.findAll();
 	}
 
-   @Transactional	
+	@Transactional	
 	public Account depositToAccount(Long id, BigDecimal amount) {
-	   Account retrievedAccount = retrieveAccount(id);
-	   retrievedAccount.setBalance(retrievedAccount.getBalance().add(amount));
-	   transactionsService.recordTransaction(retrievedAccount,amount,TransactionType.DEPOSIT);
-       return repository.save(retrievedAccount);
+		Account retrievedAccount = retrieveAccount(id);
+		retrievedAccount.setBalance(retrievedAccount.getBalance().add(amount));
+		transactionsService.recordTransaction(retrievedAccount,amount,TransactionType.DEPOSIT);
+		return repository.save(retrievedAccount);
 	}
-   @Transactional
+	
+	@Transactional
 	public Account withdrawFromAccount(Long id, BigDecimal amount) throws InsufficientFundsException {
-	   Account retrievedAccount = retrieveAccount(id);
-	    if (retrievedAccount.getBalance().compareTo(amount) < 0) {
-	    	throw new InsufficientFundsException("Insufficient funds");
-	    }
+		Account retrievedAccount = retrieveAccount(id);
+		if (retrievedAccount.getBalance().compareTo(amount) < 0) {
+			throw new InsufficientFundsException("Insufficient funds");
+		}
 
-	   retrievedAccount.setBalance(retrievedAccount.getBalance().subtract(amount));
-	   transactionsService.recordTransaction(retrievedAccount,amount,TransactionType.WITHDRAWAL);
-       return repository.save(retrievedAccount);
+		retrievedAccount.setBalance(retrievedAccount.getBalance().subtract(amount));
+		transactionsService.recordTransaction(retrievedAccount,amount,TransactionType.WITHDRAWAL);
+		return repository.save(retrievedAccount);
 	}
-   
-
 }
