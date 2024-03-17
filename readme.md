@@ -10,7 +10,7 @@ For this project I created an API using Java with Springboot simulating a simple
 ## Endpoints
 
 The API has the following endpoints:
-For client:
+Client endpoint:
 
 GET /customers
 
@@ -20,8 +20,7 @@ GET /customers/{id}
 
 PATCH /customers/{id}
 
-For account:
-
+Account endpoint: 
 GET /accounts
 
 POST /accounts
