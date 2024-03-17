@@ -11,6 +11,7 @@ For this project I created an API using Java with Springboot simulating a simple
 
 The API has the following endpoints:
 For client:
+
 GET /customers
 
 POST /customers
@@ -20,11 +21,17 @@ GET /customers/{id}
 PATCH /customers/{id}
 
 For account:
+
 GET /accounts
+
 POST /accounts
+
 POST /accounts/{id}/withdraw
+
 POST /accounts/{id}/deposit
+
 GET /accounts/{id}
+
 GET /accounts/{id}/transactions
 
 ## Used technologies: 
